@@ -1,8 +1,10 @@
-### This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# **Calculator App using React - Next JS**
 
-## ## Getting Started
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-### First, run the development server:
+## Getting Started
+
+First, run the development server:
 
 ```bash
 npm run dev# oryarn dev# orpnpm dev# orbun dev
