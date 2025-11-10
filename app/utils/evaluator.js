@@ -1,5 +1,6 @@
 // app/utils/evaluator.js
-// Safe expression evaluator - NO eval()!
+// This is created to safely evaluate mathematical expressions only
+// Prevents the user from injecting codes via eval()
 // This is a pure function: same input always gives same output
 
 /**
@@ -8,6 +9,7 @@
  * @returns {number} - The calculated result
  * @throws {Error} - If expression is invalid or division by zero
  */
+
 export function evaluateExpression(expr) {
   // Remove extra spaces and validate
   expr = expr.trim();
@@ -46,6 +48,7 @@ export function evaluateExpression(expr) {
       const right = parsed[i + 1];
       const result = left * right;
       parsed.splice(i - 1, 3, result); // Replace [left, *, right] with [result]
+
     } else if (parsed[i] === "/") {
       const left = parsed[i - 1];
       const right = parsed[i + 1];
