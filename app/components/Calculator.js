@@ -40,7 +40,8 @@ export default function Calculator() {
   const [error, setError] = useState(""); // For error messages
 
   // EVENT HANDLER: Will be used as event listener for button clicks
-  const handleButtonClick = (value) => {
+  // useCallback prevents the function from being recreated on every render
+  const handleButtonClick = useCallback((value) => {
     // Clear error on any new input
     if (error) setError("");
 
@@ -102,7 +103,7 @@ export default function Calculator() {
         setDisplay(display + value); // Append digit
       }
     }
-  };
+  }, [display, expression, error]); // Dependencies for useCallback
 
   // KEYBOARD SUPPORT: Listen for key presses
   useEffect(() => {
@@ -156,35 +157,46 @@ export default function Calculator() {
       </h1>
       
       {/* DISPLAY AREA - shows current expression and result */}
-      <div style={{
-        background: "#f5f5f5",
-        padding: "20px",
-        borderRadius: "12px",
-        marginBottom: "20px",
-        minHeight: "80px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between"
-      }}>
+      <div 
+        role="region" 
+        aria-label="Calculator display"
+        aria-live="polite" // Screen readers announce changes
+        style={{
+          background: "#f5f5f5",
+          padding: "20px",
+          borderRadius: "12px",
+          marginBottom: "20px",
+          minHeight: "80px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between"
+        }}
+      >
         {/* Expression display (what user typed) */}
-        <div style={{
-          fontSize: "16px",
-          color: "#666",
-          textAlign: "right",
-          minHeight: "20px",
-          marginBottom: "8px"
-        }}>
+        <div 
+          aria-label="Expression"
+          style={{
+            fontSize: "16px",
+            color: "#666",
+            textAlign: "right",
+            minHeight: "20px",
+            marginBottom: "8px"
+          }}
+        >
           {expression || " "} {/* Show expression or space */}
         </div>
         
         {/* Result display (current number or answer) */}
-        <div style={{
-          fontSize: "32px",
-          fontWeight: "bold",
-          color: error ? "#ff6b6b" : "#333", // Red if error
-          textAlign: "right",
-          wordBreak: "break-all"
-        }}>
+        <div 
+          aria-label={error ? "Error" : "Current value"}
+          style={{
+            fontSize: "32px",
+            fontWeight: "bold",
+            color: error ? "#ff6b6b" : "#333", // Red if error
+            textAlign: "right",
+            wordBreak: "break-all"
+          }}
+        >
           {error || display} {/* Show error or current display */}
         </div>
       </div>
@@ -212,10 +224,24 @@ export default function Calculator() {
             textColor = "white";
           }
 
+          // Generate descriptive label for screen readers
+          const getAriaLabel = () => {
+            if (btn.value === "clear") return "Clear all";
+            if (btn.value === "delete") return "Delete last character";
+            if (btn.value === "=") return "Calculate result";
+            if (btn.variant === "operator") {
+              const opNames = { "+": "plus", "-": "minus", "*": "multiply", "/": "divide" };
+              return opNames[btn.value] || btn.value;
+            }
+            return btn.label;
+          };
+
           return (
             <button
               key={btn.value}
               onClick={() => handleButtonClick(btn.value)}
+              aria-label={getAriaLabel()} // Accessibility: describes button to screen readers
+              tabIndex={0} // Accessibility: makes button keyboard-navigable with Tab
               style={{
                 padding: "20px",
                 fontSize: "20px",
